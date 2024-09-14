@@ -6,7 +6,7 @@ import "../styles/style.scss";
 
 const HomeMain = styled.div`
   width: 100%;
-  height: 150vh;
+  height: fit-content;
   display: flex;
   flex-direction: column;
 `;
@@ -15,12 +15,12 @@ const Homepage = () => {
   return (
     <HomeMain>
       <NavBar></NavBar>
-      <h1>Hello from the home page!</h1>
-      <p>So, how are you?</p>
-      <hr />
-      <h2>The link to the shopping cart page is here:</h2>
-      <br />
-      <Link to="cart">Cart</Link>
+      <div className="mainContent">
+        <div className="results">
+          <p>Current Items For Sale</p>
+        </div>
+        <CardBox></CardBox>
+      </div>
     </HomeMain>
   );
 };
@@ -34,7 +34,7 @@ const NavMain = styled.div`
   top: 0;
   display: flex;
   h1 {
-    margin-left: 12px;
+    padding-left: 12px;
   }
 `;
 
@@ -45,15 +45,48 @@ const NavBar = () => {
     <NavMain>
       <h1>Odinzon</h1>
       <div className="cartHolder">
-        <img src="#" alt="shopping cart" />
+        <Link to="/cart">
+          <img src="#" alt="shopping cart" />
+        </Link>
         <p>{cartItems}</p>
       </div>
     </NavMain>
   );
 };
 
-// NavBar.propTypes = {
-//   cartItems: PropTypes.number,
-// };
+const CardBox = () => {
+  const [itemArray, setItemArray] = useState(["item default here", "item", "item", "item", "item", "item"]);
+
+  return (
+    <div className="cardBox">
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={0}></Card>
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={1}></Card>
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={2}></Card>
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={3}></Card>
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={4}></Card>
+      <Card itemArray={itemArray} setItemArray={setItemArray} index={5}></Card>
+    </div>
+  );
+};
+
+const Card = ({ itemArray, setItemArray, index }) => {
+  return (
+    <div className="card">
+      <img src={itemArray[index].url} alt={itemArray[index]} />
+      <div className="itemHolder">
+        <h2>Item name and brief description</h2>
+        <p>Rating: 5/5</p>
+        <p>$599</p>
+        <button>Add to cart</button>
+      </div>
+    </div>
+  );
+};
+
+Card.propTypes = {
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  index: PropTypes.number,
+};
 
 export { Homepage, NavBar };
