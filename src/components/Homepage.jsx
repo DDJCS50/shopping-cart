@@ -3,6 +3,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import "../styles/style.scss";
+import cartUrl from "../assets/cart-outline.svg";
+import plusUrl from "../assets/plus.svg";
+import minusUrl from "../assets/minus.svg";
 
 const HomeMain = styled.div`
   width: 100%;
@@ -36,17 +39,35 @@ const NavMain = styled.div`
   h1 {
     padding-left: 12px;
   }
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
+
+  img {
+    width: 35px;
+    height: 35px;
+  }
+
+  p {
+    transform: translate(-22px, -20px);
+    font-weight: bold;
+    color: orange;
+  }
 `;
 
 const NavBar = () => {
-  const [cartItems, setCartItems] = useState(4);
+  const [cartItems, setCartItems] = useState(40);
 
   return (
     <NavMain>
-      <h1>Odinzon</h1>
+      <Link to="/">
+        <h1>Odin&apos;s Shop</h1>
+      </Link>
       <div className="cartHolder">
         <Link to="/cart">
-          <img src="#" alt="shopping cart" />
+          <img src={cartUrl} alt="shopping cart" />
         </Link>
         <p>{cartItems}</p>
       </div>
@@ -70,6 +91,8 @@ const CardBox = () => {
 };
 
 const Card = ({ itemArray, setItemArray, index }) => {
+  const [value, setValue] = useState(1);
+
   return (
     <div className="card">
       <img src={itemArray[index].url} alt={itemArray[index]} />
@@ -77,16 +100,67 @@ const Card = ({ itemArray, setItemArray, index }) => {
         <h2>Item name and brief description</h2>
         <p>Rating: 5/5</p>
         <p>$599</p>
-        <button>Add to cart</button>
+        <div className="addItemBox">
+          <button>Add to cart</button>
+          <ImgBlock source={minusUrl} mathType={"subtract"} value={value} setValue={setValue}></ImgBlock>
+          <NumberInput value={value} setValue={setValue}></NumberInput>
+          <ImgBlock source={plusUrl} mathType={"add"} value={value} setValue={setValue}></ImgBlock>
+        </div>
       </div>
     </div>
   );
 };
 
+const ImgBlock = ({ source, mathType, value, setValue }) => {
+  function handleClick() {
+    let holder = value;
+
+    if (mathType == "subtract") {
+      holder--;
+      if (holder > 0) {
+        setValue(holder);
+      }
+    } else if (mathType == "add") {
+      holder++;
+      if (holder < 11) {
+        setValue(holder);
+      }
+    }
+  }
+
+  return <img onClick={handleClick} src={source} alt="minus" />;
+};
+
+function NumberInput({ value, setValue }) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(event) => {
+        if (event.target.value > 0 && event.target.value < 11) {
+          setValue(event.target.value);
+        } else setValue(1);
+      }}
+    />
+  );
+}
+
 Card.propTypes = {
   itemArray: PropTypes.array,
   setItemArray: PropTypes.func,
   index: PropTypes.number,
+};
+
+NumberInput.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setValue: PropTypes.func,
+};
+
+ImgBlock.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setValue: PropTypes.func,
+  source: PropTypes.string,
+  mathType: PropTypes.string,
 };
 
 export { Homepage, NavBar };

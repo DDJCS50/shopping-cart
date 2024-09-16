@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { NavBar } from "./Homepage";
 
@@ -12,8 +11,6 @@ const Cart = () => {
     <CartMain>
       <NavBar></NavBar>
       <h1>The cart page!</h1>
-      <br />
-      <Link to="/">Home</Link>
     </CartMain>
   );
 };
