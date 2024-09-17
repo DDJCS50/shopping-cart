@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/style.scss";
 import cartUrl from "../assets/cart-outline.svg";
 import plusUrl from "../assets/plus.svg";
@@ -15,14 +15,15 @@ const HomeMain = styled.div`
 `;
 
 const Homepage = () => {
+  const [cartItems, setCartItems] = useState(0);
   return (
     <HomeMain>
-      <NavBar></NavBar>
+      <NavBar cartItems={cartItems}></NavBar>
       <div className="mainContent">
         <div className="results">
           <p>Current Items For Sale</p>
         </div>
-        <CardBox></CardBox>
+        <CardBox cartItems={cartItems} setCartItems={setCartItems}></CardBox>
       </div>
     </HomeMain>
   );
@@ -57,9 +58,7 @@ const NavMain = styled.div`
   }
 `;
 
-const NavBar = () => {
-  const [cartItems, setCartItems] = useState(40);
-
+const NavBar = ({ cartItems }) => {
   return (
     <NavMain>
       <Link to="/">
@@ -75,33 +74,68 @@ const NavBar = () => {
   );
 };
 
-const CardBox = () => {
-  const [itemArray, setItemArray] = useState(["item default here", "item", "item", "item", "item", "item"]);
+const CardBox = ({ cartItems, setCartItems }) => {
+  const [item1, error1] = useMyFetch("https://fakestoreapi.com/products/1");
+  const [item2, error2] = useMyFetch("https://fakestoreapi.com/products/2");
+  const [item3, error3] = useMyFetch("https://fakestoreapi.com/products/3");
+  const [item4, error4] = useMyFetch("https://fakestoreapi.com/products/4");
+  const [item5, error5] = useMyFetch("https://fakestoreapi.com/products/5");
+  const [item6, error6] = useMyFetch("https://fakestoreapi.com/products/6");
+
+  let itemArray = [item1, item2, item3, item4, item5, item6];
 
   return (
     <div className="cardBox">
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={0}></Card>
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={1}></Card>
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={2}></Card>
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={3}></Card>
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={4}></Card>
-      <Card itemArray={itemArray} setItemArray={setItemArray} index={5}></Card>
+      <Card item={itemArray[0]} cartItems={cartItems} setCartItems={setCartItems} error={error1}></Card>
+      <Card item={itemArray[1]} cartItems={cartItems} setCartItems={setCartItems} error={error2}></Card>
+      <Card item={itemArray[2]} cartItems={cartItems} setCartItems={setCartItems} error={error3}></Card>
+      <Card item={itemArray[3]} cartItems={cartItems} setCartItems={setCartItems} error={error4}></Card>
+      <Card item={itemArray[4]} cartItems={cartItems} setCartItems={setCartItems} error={error5}></Card>
+      <Card item={itemArray[5]} cartItems={cartItems} setCartItems={setCartItems} error={error6}></Card>
     </div>
   );
 };
 
-const Card = ({ itemArray, setItemArray, index }) => {
+const useMyFetch = (productUrl) => {
+  const [item, setItem] = useState();
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(productUrl)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error("server error");
+        }
+        return res.json();
+      })
+      .then((json) => {
+        setItem(json);
+        setError(null);
+        console.log(json);
+      })
+      .catch((error) => setError(error));
+  }, [productUrl]);
+
+  return [item, error];
+};
+
+const Card = ({ item, cartItems, setCartItems, error }) => {
   const [value, setValue] = useState(1);
+
+  if (!item) return <p>Loading...</p>;
+  if (error) return <p>A network error was encountered</p>;
 
   return (
     <div className="card">
-      <img src={itemArray[index].url} alt={itemArray[index]} />
+      <img src={item.image} alt={item.description} />
       <div className="itemHolder">
-        <h2>Item name and brief description</h2>
-        <p>Rating: 5/5</p>
-        <p>$599</p>
+        <h2>{item.title}</h2>
+        <p>
+          Rating: {item.rating.rate}/5 Reviews: {item.rating.count}
+        </p>
+        <p>${item.price.toFixed(2)}</p>
         <div className="addItemBox">
-          <button>Add to cart</button>
+          <AddCartButton value={value} setValue={setValue} cartItems={cartItems} setCartItems={setCartItems}></AddCartButton>
           <ImgBlock source={minusUrl} mathType={"subtract"} value={value} setValue={setValue}></ImgBlock>
           <NumberInput value={value} setValue={setValue}></NumberInput>
           <ImgBlock source={plusUrl} mathType={"add"} value={value} setValue={setValue}></ImgBlock>
@@ -138,17 +172,29 @@ function NumberInput({ value, setValue }) {
       value={value}
       onChange={(event) => {
         if (event.target.value > 0 && event.target.value < 11) {
-          setValue(event.target.value);
+          let eventHolder = parseInt(event.target.value);
+          setValue(eventHolder);
         } else setValue(1);
       }}
     />
   );
 }
 
+const AddCartButton = ({ cartItems, setCartItems, value, setValue }) => {
+  function handleCart() {
+    setCartItems(cartItems + value);
+    setValue(1);
+  }
+  return <button onClick={handleCart}>Add to cart</button>;
+};
+
 Card.propTypes = {
   itemArray: PropTypes.array,
-  setItemArray: PropTypes.func,
   index: PropTypes.number,
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+  item: PropTypes.object,
+  error: PropTypes.string,
 };
 
 NumberInput.propTypes = {
@@ -161,6 +207,23 @@ ImgBlock.propTypes = {
   setValue: PropTypes.func,
   source: PropTypes.string,
   mathType: PropTypes.string,
+};
+
+NavBar.propTypes = {
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+};
+
+CardBox.propTypes = {
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+};
+
+AddCartButton.propTypes = {
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setValue: PropTypes.func,
 };
 
 export { Homepage, NavBar };

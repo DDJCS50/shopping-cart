@@ -50,7 +50,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 250px;
+      height: fit-content;
       width: 500px;
       background-color: #e2e8f0;
       padding: 24px;
@@ -60,6 +60,11 @@
       font-weight: bolder;
       border-radius: 4px;
       transition: transform .25s;
+
+      >img {
+        width: 250px;
+        height: 250px;
+      }
 
       .itemHolder {
         display: flex;
