@@ -10,6 +10,6 @@ describe("Homepage component", () => {
         <Homepage />
       </MemoryRouter>
     );
-    expect(screen.getAllByRole("heading")[0].textContent).toMatch("Odinzon");
+    expect(screen.getAllByRole("heading")[0].textContent).toMatch("Odin's Shop");
   });
 });

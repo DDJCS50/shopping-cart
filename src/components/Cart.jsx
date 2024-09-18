@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { NavBar } from "./Homepage";
+import PropTypes from "prop-types";
+import { useOutletContext } from "react-router-dom";
 
 const CartMain = styled.div`
   color: darkgreen;
@@ -7,9 +9,10 @@ const CartMain = styled.div`
 `;
 
 const Cart = () => {
+  const [cartItems, setCartItems] = useOutletContext();
   return (
     <CartMain>
-      <NavBar></NavBar>
+      <NavBar cartItems={cartItems}></NavBar>
       <h1>The cart page!</h1>
     </CartMain>
   );

@@ -6,6 +6,7 @@ import "../styles/style.scss";
 import cartUrl from "../assets/cart-outline.svg";
 import plusUrl from "../assets/plus.svg";
 import minusUrl from "../assets/minus.svg";
+import { useOutletContext } from "react-router-dom";
 
 const HomeMain = styled.div`
   width: 100%;
@@ -15,7 +16,7 @@ const HomeMain = styled.div`
 `;
 
 const Homepage = () => {
-  const [cartItems, setCartItems] = useState(0);
+  const [cartItems, setCartItems] = useOutletContext();
   return (
     <HomeMain>
       <NavBar cartItems={cartItems}></NavBar>
