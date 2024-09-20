@@ -16,7 +16,7 @@ const HomeMain = styled.div`
 `;
 
 const Homepage = () => {
-  const [cartItems, setCartItems] = useOutletContext();
+  const [cartItems, setCartItems, itemArray, setItemArray] = useOutletContext();
   return (
     <HomeMain>
       <NavBar cartItems={cartItems}></NavBar>
@@ -24,7 +24,7 @@ const Homepage = () => {
         <div className="results">
           <p>Current Items For Sale</p>
         </div>
-        <CardBox cartItems={cartItems} setCartItems={setCartItems}></CardBox>
+        <CardBox cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CardBox>
       </div>
     </HomeMain>
   );
@@ -75,7 +75,7 @@ const NavBar = ({ cartItems }) => {
   );
 };
 
-const CardBox = ({ cartItems, setCartItems }) => {
+const CardBox = ({ cartItems, setCartItems, itemArray, setItemArray }) => {
   const [item1, error1] = useMyFetch("https://fakestoreapi.com/products/1");
   const [item2, error2] = useMyFetch("https://fakestoreapi.com/products/2");
   const [item3, error3] = useMyFetch("https://fakestoreapi.com/products/3");
@@ -83,16 +83,16 @@ const CardBox = ({ cartItems, setCartItems }) => {
   const [item5, error5] = useMyFetch("https://fakestoreapi.com/products/5");
   const [item6, error6] = useMyFetch("https://fakestoreapi.com/products/6");
 
-  let itemArray = [item1, item2, item3, item4, item5, item6];
+  let itemHolder = [item1, item2, item3, item4, item5, item6];
 
   return (
     <div className="cardBox">
-      <Card item={itemArray[0]} cartItems={cartItems} setCartItems={setCartItems} error={error1}></Card>
-      <Card item={itemArray[1]} cartItems={cartItems} setCartItems={setCartItems} error={error2}></Card>
-      <Card item={itemArray[2]} cartItems={cartItems} setCartItems={setCartItems} error={error3}></Card>
-      <Card item={itemArray[3]} cartItems={cartItems} setCartItems={setCartItems} error={error4}></Card>
-      <Card item={itemArray[4]} cartItems={cartItems} setCartItems={setCartItems} error={error5}></Card>
-      <Card item={itemArray[5]} cartItems={cartItems} setCartItems={setCartItems} error={error6}></Card>
+      <Card item={itemHolder[0]} cartItems={cartItems} setCartItems={setCartItems} error={error1} itemArray={itemArray} setItemArray={setItemArray}></Card>
+      <Card item={itemHolder[1]} cartItems={cartItems} setCartItems={setCartItems} error={error2} itemArray={itemArray} setItemArray={setItemArray}></Card>
+      <Card item={itemHolder[2]} cartItems={cartItems} setCartItems={setCartItems} error={error3} itemArray={itemArray} setItemArray={setItemArray}></Card>
+      <Card item={itemHolder[3]} cartItems={cartItems} setCartItems={setCartItems} error={error4} itemArray={itemArray} setItemArray={setItemArray}></Card>
+      <Card item={itemHolder[4]} cartItems={cartItems} setCartItems={setCartItems} error={error5} itemArray={itemArray} setItemArray={setItemArray}></Card>
+      <Card item={itemHolder[5]} cartItems={cartItems} setCartItems={setCartItems} error={error6} itemArray={itemArray} setItemArray={setItemArray}></Card>
     </div>
   );
 };
@@ -120,7 +120,7 @@ const useMyFetch = (productUrl) => {
   return [item, error];
 };
 
-const Card = ({ item, cartItems, setCartItems, error }) => {
+const Card = ({ item, cartItems, setCartItems, error, itemArray, setItemArray }) => {
   const [value, setValue] = useState(1);
 
   if (!item) return <p>Loading...</p>;
@@ -136,7 +136,7 @@ const Card = ({ item, cartItems, setCartItems, error }) => {
         </p>
         <p>${item.price.toFixed(2)}</p>
         <div className="addItemBox">
-          <AddCartButton value={value} setValue={setValue} cartItems={cartItems} setCartItems={setCartItems}></AddCartButton>
+          <AddCartButton value={value} setValue={setValue} cartItems={cartItems} setCartItems={setCartItems} item={item} itemArray={itemArray} setItemArray={setItemArray}></AddCartButton>
           <ImgBlock source={minusUrl} mathType={"subtract"} value={value} setValue={setValue}></ImgBlock>
           <NumberInput value={value} setValue={setValue}></NumberInput>
           <ImgBlock source={plusUrl} mathType={"add"} value={value} setValue={setValue}></ImgBlock>
@@ -181,8 +181,21 @@ function NumberInput({ value, setValue }) {
   );
 }
 
-const AddCartButton = ({ cartItems, setCartItems, value, setValue }) => {
+const AddCartButton = ({ cartItems, setCartItems, value, setValue, item, itemArray, setItemArray }) => {
   function handleCart() {
+    let modifiedItem = { ...item, amount: value };
+    setItemArray([...itemArray, modifiedItem]);
+    for (let i = 0; i < itemArray.length; i++) {
+      if (modifiedItem.id == itemArray[i].id) {
+        let tempArray = itemArray;
+        modifiedItem.amount = tempArray[i].amount + value;
+        tempArray.splice(i, 1);
+        tempArray.splice(i, 0, modifiedItem);
+        console.log(tempArray);
+        setItemArray(tempArray);
+      }
+    }
+    console.log(itemArray);
     setCartItems(cartItems + value);
     setValue(1);
   }

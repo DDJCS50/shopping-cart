@@ -127,3 +127,82 @@ body {
 a {
   padding-left: 12px;
 }
+
+.cartBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 24px;
+  width: fit-content;
+  gap: 12px;
+  flex-wrap: nowrap;
+  min-height: fit-content;
+
+  .cartCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: fit-content;
+    width: 500px;
+    background-color: #e2e8f0;
+    padding: 24px;
+    border: 1px solid black;
+    box-shadow: 6px 7px 10px -5px gray;
+    font-size: larger;
+    font-weight: bolder;
+    border-radius: 4px;
+    transition: transform .25s;
+
+    >img {
+      width: 250px;
+      height: 250px;
+    }
+
+    .itemHolder {
+      display: flex;
+      flex-direction: column;
+
+      .addItemBox {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        img {
+          width: 25px;
+          height: 25px;
+          cursor: pointer;
+        }
+
+        button {
+          display: inline-block;
+          border: none;
+          padding: 1rem 2rem;
+          margin: 0;
+          text-decoration: none;
+          background: #0069ed;
+          color: #ffffff;
+          font-family: sans-serif;
+          font-size: 1rem;
+          line-height: 1;
+          cursor: pointer;
+          text-align: center;
+          width: 150px;
+          border-radius: 4px;
+        }
+
+        input {
+          width: 1rem;
+          text-align: center;
+        }
+      }
+
+    }
+
+  }
+
+  .cartCard:hover {
+    transform: translate(-4px, -4px);
+    ;
+  }
+}
