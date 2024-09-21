@@ -18,6 +18,7 @@ const Cart = () => {
       <NavBar cartItems={cartItems}></NavBar>
       <h1>The cart page!</h1>
       <CartBox cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CartBox>
+      <CheckoutButton cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CheckoutButton>
     </CartMain>
   );
 };
@@ -48,10 +49,10 @@ const CartCard = ({ item, cartItems, setCartItems, itemArray, setItemArray }) =>
         </p>
         <p>${item.price.toFixed(2)}</p>
         <div className="addItemBox">
-          {/* <AddCartButton value={value} setValue={setValue} cartItems={cartItems} setCartItems={setCartItems} item={item} itemArray={itemArray} setItemArray={setItemArray}></AddCartButton> */}
-          <ImgBlock source={minusUrl} mathType={"subtract"} value={value} setValue={setValue} item={item} itemArray={itemArray} setItemArray={setItemArray} cartItems={cartItems} setCartItems={setCartItems}></ImgBlock>
+          <RemoveCartButton value={value} setValue={setValue} cartItems={cartItems} setCartItems={setCartItems} item={item} itemArray={itemArray} setItemArray={setItemArray}></RemoveCartButton>
+          <CartImgBlock source={minusUrl} mathType={"subtract"} value={value} setValue={setValue} item={item} itemArray={itemArray} setItemArray={setItemArray} cartItems={cartItems} setCartItems={setCartItems}></CartImgBlock>
           <CartNumberInput value={value} setValue={setValue} item={item} itemArray={itemArray} setItemArray={setItemArray}></CartNumberInput>
-          <ImgBlock source={plusUrl} mathType={"add"} value={value} setValue={setValue} item={item} itemArray={itemArray} setItemArray={setItemArray} cartItems={cartItems} setCartItems={setCartItems}></ImgBlock>
+          <CartImgBlock source={plusUrl} mathType={"add"} value={value} setValue={setValue} item={item} itemArray={itemArray} setItemArray={setItemArray} cartItems={cartItems} setCartItems={setCartItems}></CartImgBlock>
         </div>
       </div>
     </div>
@@ -60,7 +61,34 @@ const CartCard = ({ item, cartItems, setCartItems, itemArray, setItemArray }) =>
   );
 };
 
-function CartNumberInput({ value, setValue, item, itemArray, setItemArray }) {
+const CheckoutButton = ({ setCartItems, setItemArray }) => {
+  function handleCheckout() {
+    setCartItems(0);
+    setItemArray([]);
+  }
+  return (
+    <div className="checkout">
+      <button onClick={handleCheckout}>Checkout</button>
+    </div>
+  );
+};
+
+const RemoveCartButton = ({ cartItems, setCartItems, item, itemArray, setItemArray }) => {
+  function handleCart() {
+    let modifiedItem = { ...item };
+    for (let i = 0; i < itemArray.length; i++) {
+      if (modifiedItem.id == itemArray[i].id) {
+        let tempArray = [...itemArray];
+        tempArray.splice(i, 1);
+        setCartItems(cartItems - modifiedItem.amount);
+        setItemArray(tempArray);
+      }
+    }
+  }
+  return <button onClick={handleCart}>Remove</button>;
+};
+
+const CartNumberInput = ({ item, itemArray }) => {
   let render = 1;
   for (let i = 0; i < itemArray.length; i++) {
     if (item.id == itemArray[i].id) {
@@ -68,15 +96,15 @@ function CartNumberInput({ value, setValue, item, itemArray, setItemArray }) {
     }
   }
   return <p>{render}</p>;
-}
+};
 
-const ImgBlock = ({ source, mathType, value, setValue, item, itemArray, setItemArray, cartItems, setCartItems }) => {
+const CartImgBlock = ({ source, mathType, item, itemArray, setItemArray, cartItems, setCartItems }) => {
   function handleClick() {
     let newItem = item;
     for (let i = 0; i < itemArray.length; i++) {
       if (itemArray[i].id == newItem.id) {
         let newArray = [...itemArray];
-        console.log(newArray);
+
         if (mathType == "subtract") {
           newItem.amount = newItem.amount - 1;
           setCartItems(cartItems - 1);
@@ -84,17 +112,61 @@ const ImgBlock = ({ source, mathType, value, setValue, item, itemArray, setItemA
           newItem.amount = newItem.amount + 1;
           setCartItems(cartItems + 1);
         }
-        console.log(newArray);
+
         newArray.splice(i, 1);
-        console.log(newArray);
-        newArray.splice(i, 0, newItem);
-        console.log(newArray);
+        if (newItem.amount != 0) {
+          newArray.splice(i, 0, newItem);
+        }
+
         setItemArray(newArray);
       }
     }
   }
 
-  return <img onClick={handleClick} src={source} alt="minus" />;
+  return <img onClick={handleClick} src={source} alt={mathType + " " + "button"} />;
+};
+
+CartCard.propTypes = {
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+  item: PropTypes.object,
+};
+
+CartBox.propTypes = {
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+};
+
+CheckoutButton.propTypes = {
+  setItemArray: PropTypes.func,
+  setCartItems: PropTypes.func,
+};
+
+RemoveCartButton.propTypes = {
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
+  item: PropTypes.object,
+};
+
+CartNumberInput.propTypes = {
+  itemArray: PropTypes.array,
+  item: PropTypes.object,
+};
+
+CartImgBlock.propTypes = {
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  item: PropTypes.object,
+  source: PropTypes.string,
+  mathType: PropTypes.string,
+  cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCartItems: PropTypes.func,
 };
 
 export default Cart;

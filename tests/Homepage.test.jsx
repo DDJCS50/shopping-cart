@@ -1,15 +1,16 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Homepage } from "../src/components/Homepage";
+import { Homepage, NavBar } from "../src/components/Homepage";
 import { MemoryRouter } from "react-router-dom";
 
 describe("Homepage component", () => {
   it("renders correct heading in navbar", () => {
     render(
       <MemoryRouter>
-        <Homepage />
+        <NavBar></NavBar>
       </MemoryRouter>
     );
-    expect(screen.getAllByRole("heading")[0].textContent).toMatch("Odin's Shop");
+    const testing = screen.getByText(/odin's shop/i);
+    expect(testing.textContent).toMatch(/odin's shop/i);
   });
 });

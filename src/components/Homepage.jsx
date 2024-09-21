@@ -163,10 +163,10 @@ const ImgBlock = ({ source, mathType, value, setValue }) => {
     }
   }
 
-  return <img onClick={handleClick} src={source} alt="minus" />;
+  return <img onClick={handleClick} src={source} alt={mathType + " " + "button"} />;
 };
 
-function NumberInput({ value, setValue }) {
+const NumberInput = ({ value, setValue }) => {
   return (
     <input
       type="text"
@@ -179,7 +179,7 @@ function NumberInput({ value, setValue }) {
       }}
     />
   );
-}
+};
 
 const AddCartButton = ({ cartItems, setCartItems, value, setValue, item, itemArray, setItemArray }) => {
   function handleCart() {
@@ -187,7 +187,7 @@ const AddCartButton = ({ cartItems, setCartItems, value, setValue, item, itemArr
     setItemArray([...itemArray, modifiedItem]);
     for (let i = 0; i < itemArray.length; i++) {
       if (modifiedItem.id == itemArray[i].id) {
-        let tempArray = itemArray;
+        let tempArray = [...itemArray];
         modifiedItem.amount = tempArray[i].amount + value;
         tempArray.splice(i, 1);
         tempArray.splice(i, 0, modifiedItem);
@@ -204,6 +204,7 @@ const AddCartButton = ({ cartItems, setCartItems, value, setValue, item, itemArr
 
 Card.propTypes = {
   itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
   index: PropTypes.number,
   cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   setCartItems: PropTypes.func,
@@ -231,6 +232,8 @@ NavBar.propTypes = {
 CardBox.propTypes = {
   cartItems: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   setCartItems: PropTypes.func,
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
 };
 
 AddCartButton.propTypes = {
@@ -238,6 +241,9 @@ AddCartButton.propTypes = {
   setCartItems: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   setValue: PropTypes.func,
+  itemArray: PropTypes.array,
+  setItemArray: PropTypes.func,
+  item: PropTypes.object,
 };
 
-export { Homepage, NavBar };
+export { Homepage, NavBar, CardBox };
