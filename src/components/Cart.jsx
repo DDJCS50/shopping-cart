@@ -16,9 +16,11 @@ const Cart = () => {
   return (
     <CartMain>
       <NavBar cartItems={cartItems}></NavBar>
-      <h1>The cart page!</h1>
-      <CartBox cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CartBox>
-      <CheckoutButton cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CheckoutButton>
+      <div className="mainContent">
+        <h1>Cart</h1>
+        <CartBox cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CartBox>
+        <CheckoutButton cartItems={cartItems} setCartItems={setCartItems} itemArray={itemArray} setItemArray={setItemArray}></CheckoutButton>
+      </div>
     </CartMain>
   );
 };
@@ -169,4 +171,4 @@ CartImgBlock.propTypes = {
   setCartItems: PropTypes.func,
 };
 
-export default Cart;
+export { Cart, CartCard, RemoveCartButton };

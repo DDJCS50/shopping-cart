@@ -15,7 +15,7 @@
 
 .mainContent {
   height: fit-content;
-  min-height: fit-content;
+  min-height: 100vh;
   width: 100vw;
   background-color: aliceblue;
   display: flex;
@@ -60,6 +60,8 @@
       font-weight: bolder;
       border-radius: 4px;
       transition: transform .25s;
+      gap: 4px;
+
 
       >img {
         width: 250px;
@@ -203,7 +205,6 @@ a {
 
   .cartCard:hover {
     transform: translate(-4px, -4px);
-    ;
   }
 }
 

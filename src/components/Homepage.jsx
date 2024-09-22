@@ -112,7 +112,6 @@ const useMyFetch = (productUrl) => {
       .then((json) => {
         setItem(json);
         setError(null);
-        console.log(json);
       })
       .catch((error) => setError(error));
   }, [productUrl]);
@@ -191,11 +190,9 @@ const AddCartButton = ({ cartItems, setCartItems, value, setValue, item, itemArr
         modifiedItem.amount = tempArray[i].amount + value;
         tempArray.splice(i, 1);
         tempArray.splice(i, 0, modifiedItem);
-        console.log(tempArray);
         setItemArray(tempArray);
       }
     }
-    console.log(itemArray);
     setCartItems(cartItems + value);
     setValue(1);
   }
@@ -246,4 +243,4 @@ AddCartButton.propTypes = {
   item: PropTypes.object,
 };
 
-export { Homepage, NavBar, CardBox };
+export { Homepage, NavBar, CardBox, Card, AddCartButton };
